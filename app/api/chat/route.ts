@@ -13,7 +13,7 @@ export async function POST(req: Request) {
   const { messages } = await req.json()
 
   const response = Hf.textGenerationStream({
-    model: 'HuggingFaceH4/zephyr-7b-beta',
+    model: 'microsoft/Phi-3-mini-4k-instruct',
     inputs: experimental_buildOpenAssistantPrompt(messages),
     parameters: {
       max_new_tokens: 200,
