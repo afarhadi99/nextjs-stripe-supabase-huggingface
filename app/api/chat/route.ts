@@ -13,7 +13,7 @@ export async function POST(req: Request) {
   const { messages } = await req.json()
 
   const response = Hf.textGenerationStream({
-    model: 'Qwen/Qwen2-1.5B-Instruct',
+    model: 'ruslanmv/ai-medical-model-4bit',
     inputs: experimental_buildOpenAssistantPrompt(messages),
     parameters: {
       max_new_tokens: 200,
