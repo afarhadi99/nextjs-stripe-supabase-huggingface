@@ -28,7 +28,7 @@ export default function Chat() {
         </div>
       </main>
       <footer className="bg-card px-4 py-3 border-t border-border">
-        <div className="flex items-center max-w-xl mx-auto">
+        <form onSubmit={handleSubmit} className="flex items-center max-w-xl mx-auto">
           <input
             type="text"
             placeholder="Type your message..."
@@ -36,10 +36,10 @@ export default function Chat() {
             value={input}
             onChange={handleInputChange}
           />
-          <button type="submit" onClick={handleSubmit} className="rounded-lg px-4 py-2">
+          <button type="submit" className="rounded-lg px-4 py-2">
             Send
           </button>
-        </div>
+        </form>
       </footer>
     </div>
   );
