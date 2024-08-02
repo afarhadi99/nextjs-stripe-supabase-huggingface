@@ -1,6 +1,6 @@
-# Next.js Subscription Payments Starter
+# Next.js Subscription Payments Starter with HuggingFace Chat
 
-The all-in-one starter kit for high-performance SaaS applications.
+The all-in-one starter kit for high-performance SaaS applications.This also has an additional integration with HuggingFace serverless API to chat. This SAAS started will help you build an AI chatbot with your own model from HuggingFace.
 
 ## Features
 
@@ -8,30 +8,54 @@ The all-in-one starter kit for high-performance SaaS applications.
 - Powerful data access & management tooling on top of PostgreSQL with [Supabase](https://supabase.io/docs/guides/database)
 - Integration with [Stripe Checkout](https://stripe.com/docs/payments/checkout) and the [Stripe customer portal](https://stripe.com/docs/billing/subscriptions/customer-portal)
 - Automatic syncing of pricing plans and subscription statuses via [Stripe webhooks](https://stripe.com/docs/webhooks)
-
-## Demo
-
-- https://subscription-payments.vercel.app/
-
-[![Screenshot of demo](./public/demo.png)](https://subscription-payments.vercel.app/)
-
-## Architecture
-
-![Architecture diagram](./public/architecture_diagram.png)
+- HuggignFace serverless API for a chat completion endpoint [HuggingFace](https://huggingface.co/).
 
 ## Step-by-step setup
 
 When deploying this template, the sequence of steps is important. Follow the steps below in order to get up and running.
 
-### Initiate Deployment
+### Requirement
 
-#### Vercel Deploy Button
+- Node version 18 or higher [https://nodejs.org/en]
+- Visual Studio Code [https://code.visualstudio.com/download]
+- HuggingFace [https://huggingface.co/]
+- Supabase [https://supabase.com/]
+- Stripe [https://stripe.com/]
+- Vercel if you want to deploy the project online [https://vercel.com/]
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fnextjs-subscription-payments&env=NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,STRIPE_SECRET_KEY&envDescription=Enter%20your%20Stripe%20API%20keys.&envLink=https%3A%2F%2Fdashboard.stripe.com%2Fapikeys&project-name=nextjs-subscription-payments&repository-name=nextjs-subscription-payments&integration-ids=oac_VqOgBHqhEoFTPzGkPd7L0iH6&external-id=https%3A%2F%2Fgithub.com%2Fvercel%2Fnextjs-subscription-payments%2Ftree%2Fmain)
+### Local Deployment
 
-The Vercel Deployment will create a new repository with this template on your GitHub account and guide you through a new Supabase project creation. The [Supabase Vercel Deploy Integration](https://vercel.com/integrations/supabase) will set up the necessary Supabase environment variables and run the [SQL migrations](./supabase/migrations/20230530034630_init.sql) to set up the Database schema on your account. You can inspect the created tables in your project's [Table editor](https://app.supabase.com/project/_/editor).
+1. Fork the repo and open it in your preferred IDE.
+2. Rename .env.local.example to just .env.
+3. Go to Supabase[https://supabase.com/] and create a database.
+4. Once the database is created fill in the Supabase values in the .env file.
+      NEXT_PUBLIC_SUPABASE_ANON_KEY=
+      NEXT_PUBLIC_SUPABASE_URL=
+      SUPABASE_SERVICE_ROLE_KEY=
+5. Copy the content of supabase/seed.sql into the SQL Editor in Supabase and run the query to set up your tables.
+6. Go to HuggingFace[https://huggingface.co/] and select a model you want to use. Make sure this model is supported on the serverless API.
+7. In the .env file set HUGGINGFACE_API_KEY= to your key.
+8. Go to app/api/chat/route.ts in your app and edit line 16 to the name of your model.
+9. Open Terminal and tun the following commands to install the dependencies and start the website locally
+```bash
+npm install pnpm -g
+pnpm install
+pnpm dev
+```
+10. Open your browser and navigate to [localhost:3000](http://localhost:3000/) where your app is running
 
-Should the automatic setup fail, please [create a Supabase account](https://app.supabase.com/projects), and a new project if needed. In your project, navigate to the [SQL editor](https://app.supabase.com/project/_/sql) and select the "Stripe Subscriptions" starter template from the Quick start section.
+### Vercel Deployment
+
+We will be using Github integration in Vercel so you must have this project in your Github and updated with your latest code changes.
+
+1. Add new project in Vercel and select this project
+2. Add all the env values for Environement Variables that you have so far
+      NEXT_PUBLIC_SUPABASE_ANON_KEY=
+      NEXT_PUBLIC_SUPABASE_URL=
+      SUPABASE_SERVICE_ROLE_KEY=
+      HUGGINGFACE_API_KEY=
+3. Deploy to get your public URL
+4. Follow the steps for configuring Stripe and Stripe Webhook to get the Environment Variabled for Stripe.
 
 ### Configure Auth
 
@@ -50,14 +74,6 @@ Otherwise, for auth redirects (email confirmations, magic links, OAuth providers
 If you've deployed this template via the "Deploy to Vercel" button above, you can skip this step. The Supabase Vercel Integration will have run database migrations for you. You can check this by going to [the Table Editor for your Supabase project](https://supabase.com/dashboard/project/_/editor), and confirming there are tables with seed data.
 
 Otherwise, navigate to the [SQL Editor](https://supabase.com/dashboard/project/_/sql/new), paste the contents of [the Supabase `schema.sql` file](./schema.sql), and click RUN to initialize the database.
-
-#### [Maybe Optional] - Set up Supabase environment variables (not needed if you installed via the Deploy Button)
-
-If you've deployed this template via the "Deploy to Vercel" button above, you can skip this step. The Supabase Vercel Integration will have set your environment variables for you. You can check this by going to your Vercel project settings, and clicking on 'Environment variables', there will be a list of environment variables with the Supabase icon displayed next to them.
-
-Otherwise navigate to the [API settings](https://app.supabase.com/project/_/settings/api) and paste them into the Vercel deployment interface. Copy project API keys and paste into the `NEXT_PUBLIC_SUPABASE_ANON_KEY` and `SUPABASE_SERVICE_ROLE_KEY` fields, and copy the project URL and paste to Vercel as `NEXT_PUBLIC_SUPABASE_URL`.
-
-Congrats, this completes the Supabase setup, almost there!
 
 ### Configure Stripe
 
@@ -109,15 +125,7 @@ Optionally, to speed up the setup, we have added a [fixtures file](fixtures/stri
 1. Add the products and prices that you want
 1. Set up the required business information and links
 
-### That's it
-
-I know, that was quite a lot to get through, but it's worth it. You're now ready to earn recurring revenue from your customers. 🥳
-
-## Develop locally
-
-If you haven't already done so, clone your Github repository to your local machine.
-
-### Install dependencies
+### Linking to Vercel instead of using Github
 
 Ensure you have [pnpm](https://pnpm.io/installation) installed and run:
 
